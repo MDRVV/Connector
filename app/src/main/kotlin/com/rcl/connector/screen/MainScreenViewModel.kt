@@ -11,14 +11,19 @@ import com.rcl.connector.model.StreetModel
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel: ViewModel() {
-
     val streetList = mutableStateListOf<StreetModel>()
+    val houseList = mutableStateListOf<HouseModel>()
     init {
         getStreetList()
     }
     private fun getStreetList(){
         viewModelScope.launch {
             streetList.addAll(koin.get<KtorRepository>().getStreetList())
+        }
+    }
+    fun getHouses(streetId: String){
+        viewModelScope.launch {
+            houseList.addAll(koin.get<KtorRepository>().getHouseList(streetId))
         }
     }
 }
