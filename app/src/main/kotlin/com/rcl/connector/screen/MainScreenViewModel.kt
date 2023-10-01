@@ -13,6 +13,14 @@ import kotlinx.coroutines.launch
 class MainScreenViewModel: ViewModel() {
     val streetList = mutableStateListOf<StreetModel>()
     val houseList = mutableStateListOf<HouseModel>()
+    val selectedStreetID = mutableStateOf("")
+    val selectedHouseID = mutableStateOf("")
+    val streetInList = mutableStateOf(false)
+    val houseInList = mutableStateOf(false)
+    val isCustomHouse = mutableStateOf(false)
+    val customHouse = mutableStateOf("")
+    val customFrame = mutableStateOf("")
+    val apartment = mutableStateOf("")
     init {
         getStreetList()
     }
