@@ -31,7 +31,13 @@ class MainScreenViewModel: ViewModel() {
     }
     fun getHouses(streetId: String){
         viewModelScope.launch {
-            houseList.addAll(koin.get<KtorRepository>().getHouseList(streetId))
+            houseList.addAll(koin.get<KtorRepository>().getHouseList(streetId).sortedWith (
+                compareBy(
+                    { it.house!!.split("K", "/")[0].toIntOrNull() ?: Int.MAX_VALUE },
+                    { it.house!!.split("K", "/").getOrNull(1)?.toIntOrNull() ?: Int.MAX_VALUE }
+                )
+            )
+            )
         }
     }
 }
