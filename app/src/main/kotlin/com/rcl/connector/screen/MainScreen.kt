@@ -47,6 +47,10 @@ class MainScreen {
                                         onValueChange = {
                                             text = it
                                             mainViewModel.selectedStreetID.value = ""
+                                            if (mainViewModel.houseList.isNotEmpty()){ mainViewModel.clearHouses() }
+                                            if (mainViewModel.streetInList.value){
+                                                mainViewModel.streetInList.value = false
+                                            }
                                             if (text.length >= 3 && !expanded) {
                                                 expanded = true
                                             }
@@ -72,7 +76,6 @@ class MainScreen {
                                                         mainViewModel.selectedStreetID.value = item.streetId!!
                                                         mainViewModel.streetInList.value = true
                                                         mainViewModel.getHouses(mainViewModel.selectedStreetID.value)
-                                                        mainViewModel.isCustomHouse.value = false
                                                     }
                                                 )
                                             }
@@ -100,6 +103,12 @@ class MainScreen {
                                         onValueChange = {
                                             text = it
                                             mainViewModel.selectedHouseID.value = ""
+                                            if (mainViewModel.houseInList.value){
+                                                mainViewModel.houseInList.value = false
+                                            }
+                                            if (!expanded){
+                                                expanded = true
+                                            }
                                         },
                                         modifier = Modifier.menuAnchor().fillMaxWidth().focusRequester(houseRequester)
                                     )
@@ -113,18 +122,17 @@ class MainScreen {
                                         }
                                     ) {
                                         mainViewModel.houseList.toList().filter { it.house!!.contains(text) }
-                                            .forEach { item ->
-                                                DropdownMenuItem(
-                                                    text = { Text(text = item.house!!) },
-                                                    onClick = {
-                                                        text = item.house!!
-                                                        expanded = false
-                                                        mainViewModel.selectedHouseID.value = item.houseId!!
-                                                        mainViewModel.houseInList.value = true
-                                                        mainViewModel.getHouses(mainViewModel.selectedStreetID.value)
-                                                    }
-                                                )
-                                            }
+                                            .forEach {item ->
+                                            DropdownMenuItem(
+                                                text = { Text(text = item.house!!) },
+                                                onClick = {
+                                                    text = item.house!!
+                                                    expanded = false
+                                                    mainViewModel.selectedHouseID.value = item.houseId!!
+                                                    mainViewModel.houseInList.value = true
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -132,9 +140,12 @@ class MainScreen {
                                 modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                if (!mainViewModel.streetInList.value && !mainViewModel.houseInList.value) {
+                                if (!mainViewModel.streetInList.value || !mainViewModel.houseInList.value) {
                                     var house by remember { mutableStateOf("") }
                                     OutlinedTextField(
+                                        label = {
+                                            Text(text = "Дом")
+                                        },
                                         singleLine = true,
                                         placeholder = {
                                             Text(text = "Дом")
@@ -151,6 +162,9 @@ class MainScreen {
                                     )
                                     var frame by remember { mutableStateOf("") }
                                     OutlinedTextField(
+                                        label = {
+                                            Text(text = "Корпус")
+                                        },
                                         singleLine = true,
                                         placeholder = {
                                             Text(text = "Корпус")
@@ -168,6 +182,9 @@ class MainScreen {
                                 }
                                 var apartment by remember { mutableStateOf("") }
                                 OutlinedTextField(
+                                    label ={
+                                        Text(text = "Квартира")
+                                    },
                                     singleLine = true,
                                     placeholder = {
                                         Text(text = "Квартира")
@@ -189,8 +206,8 @@ class MainScreen {
                         onClick = {
                                   Toast.makeText(
                                       context,
-                                      (if (mainViewModel.streetInList.value){ "ID улицы - ${mainViewModel.selectedStreetID.value}" }else{"Улица - ${mainViewModel.selectedStreetID.value}"})
-                                      + if(mainViewModel.isCustomHouse.value){"Квартира - ${mainViewModel.customHouse.value} ${if(mainViewModel.customFrame.value.isNotEmpty()){"Корпус - ${mainViewModel.customFrame.value}"} else { "" }}"}else{"ID дома - ${mainViewModel.selectedHouseID.value}}"}
+                                      (if (mainViewModel.streetInList.value){ "ID улицы - ${mainViewModel.selectedStreetID.value}, " }else{"Улица - ${mainViewModel.selectedStreetID.value}, "})
+                                      + if(mainViewModel.isCustomHouse.value){"Дом - ${mainViewModel.customHouse.value} ${if(mainViewModel.customFrame.value.isNotEmpty()){"Корпус - ${mainViewModel.customFrame.value}, "} else { ", " }}"}else{"ID дома - ${mainViewModel.selectedHouseID.value}, "}
                                       + "Квартира - ${mainViewModel.apartment.value}",
                                       Toast.LENGTH_SHORT).show()
                                                           },
