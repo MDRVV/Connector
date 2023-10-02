@@ -40,4 +40,9 @@ class MainScreenViewModel: ViewModel() {
             )
         }
     }
+    fun clearHouses(){
+        viewModelScope.launch {
+            houseList.clear()
+        }
+    }
 }
